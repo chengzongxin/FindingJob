@@ -1,16 +1,37 @@
-# This is a sample Python script.
+from web_manager import WebManager
+import ai_manager
+import time
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+index = 1
+
+# test
+def loop_find():
+    global index
+    print(f"当前投递第[{index}]个")
+    web_manager.open_job(index)
+    job_desc = web_manager.get_job_desc()
+    letter = ai_manager.generate_letter(job_desc)
+    if letter is None:
+        print("The function returned None (empty).")
+        web_manager.close_current()
+    else:
+        print(f"The function returned: {letter}")
+        # 开始聊天
+        web_manager.chat_now(letter)
+        web_manager.close_current()
+    index += 1
+    time.sleep(2)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    web_manager = WebManager()
+    web_manager.load_first_page()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    while True:
+        try:
+            loop_find()
+        except Exception:
+            continue
+
+
+

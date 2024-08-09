@@ -1,0 +1,4 @@
+**/send_record
+**/__pycache__/
+**/*.pyc
+
