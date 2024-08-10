@@ -1,13 +1,25 @@
+import file_manager
 from web_manager import WebManager
 import ai_manager
 import time
 
 index = 1
+page = 1
 
-# test
-def loop_find():
+
+def loop_find() -> bool:
+    global page
     global index
     print(f"当前投递第[{index}]个")
+    com_name = web_manager.get_com_name(index)
+    if com_name is None:
+        index += 1
+        return True
+    is_include = file_manager.check_com_in_file(com_name)
+    if is_include:
+        print(f"当前投递的公司：[{com_name}] 被过滤，跳过执行下一个")
+        index += 1
+        return True
     web_manager.open_job(index)
     job_desc = web_manager.get_job_desc()
     letter = ai_manager.generate_letter(job_desc)
@@ -20,7 +32,12 @@ def loop_find():
         web_manager.chat_now(letter)
         web_manager.close_current()
     index += 1
+    if index > 30:
+        page += 1
+        web_manager.go_next_page(page)
+        index = 1
     time.sleep(2)
+    return False
 
 
 if __name__ == '__main__':
@@ -29,9 +46,8 @@ if __name__ == '__main__':
 
     while True:
         try:
-            loop_find()
+            isContinue = loop_find()
+            if isContinue:
+                continue
         except Exception:
             continue
-
-
-
