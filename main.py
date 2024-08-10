@@ -25,14 +25,16 @@ def loop_find() -> bool:
     web_manager.open_job(index)
     print("获取职位描述")
     job_desc = web_manager.get_job_desc()
+    print("开始聊天")
+    web_manager.chat_now()
     letter = ai_manager.generate_letter(job_desc)
     if letter is None:
         print("The function returned None (empty).")
         web_manager.close_current()
     else:
         print(f"The function returned: {letter}")
+        web_manager.send_letter(letter)
         # 开始聊天
-        web_manager.chat_now(letter)
         web_manager.close_current()
     index += 1
     if index > 30:

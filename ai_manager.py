@@ -38,7 +38,7 @@ def generate_letter(job_desc):
     {question}
     """
 
-    print('开始施法========================')
+    print('========================开始念咒========================')
 
     client = OpenAI(api_key=OPENAI_API_KEY,base_url=OPENAI_BASE_URL)
     stream = client.chat.completions.create(
@@ -55,8 +55,7 @@ def generate_letter(job_desc):
         if chunk.choices[0].delta.content is not None:
             letter += chunk.choices[0].delta.content
 
-    
-    print('咒语生成========================')
+    print('========================咒语生成========================')
 
     if len(letter) < 10:
         print("生成失败")

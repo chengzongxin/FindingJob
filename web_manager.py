@@ -3,6 +3,7 @@ import time
 import subprocess
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
@@ -122,28 +123,42 @@ class WebManager:
     def get_hr_name(self):
         try:
             xpath = "//*[@id='main']/div[3]/div/div[2]/div[1]/div[4]/h2"
-            name = self.find_element_by_xpath(xpath=xpath)
+            name = self.find_element_by_xpath(xpath=xpath).text
             if len(name) > 0:
                 return name[0]
         except Exception:
             return None
 
-    def chat_now(self, letter):
+    def chat_now(self):
         xpath_chat = " //*[@id='main']/div[1]/div/div/div[1]/div[3]/div[1]/a[2]"
         # 点击按钮
         chat_now = self.driver.find_element(By.XPATH, xpath_chat)
-        if chat_now.text == '立即沟通':
-            chat_now.click()
-            self.send_letter(letter=letter)
-        else:
-            print("已沟通过，pass")
+        chat_now.click()
 
     def send_letter(self, letter):
+        # 判断是否跳转页面
+        chat_url = 'https://www.zhipin.com/web/geek/chat'
+        if chat_url in self.driver.current_url:
+            self.send_chat_page_letter(letter=letter)
+        else:
+            self.send_job_page_letter(letter=letter)
+
+    def send_job_page_letter(self, letter):
+        # 输入弹框
         input_xpath = "/html/body/div[12]/div[2]/div[2]/div/div[1]/div[2]/textarea"
         self.wait_untl_element(input_xpath)
         input = self.find_element_by_xpath(input_xpath)
         input.click()
         input.send_keys(letter)
+
+    def send_chat_page_letter(self, letter):
+        input_xpath = '//*[@id="chat-input"]'
+        self.wait_untl_element(input_xpath)
+        input = self.find_element_by_xpath(input_xpath)
+        input.click()
+        input.send_keys(letter)
+        # 模拟按回车键
+        input.send_keys(Keys.RETURN)  # 或者使用 Keys.ENTER
 
     def close_current(self):
         # 获取所有窗口句柄
