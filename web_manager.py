@@ -193,7 +193,7 @@ class WebManager:
             actions.move_to_element(element).perform()
 
             # 可选：额外调整滚动位置
-            self.driver.execute_script("window.scrollBy(0, -100);")  # 向上滚动100像素
+            # self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素
 
         except Exception as e:
             print(f"发生异常：{str(e)}")
