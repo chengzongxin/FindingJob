@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
-
+from selenium.webdriver.common.action_chains import ActionChains
 from pathlib import Path
 
 import file_manager
@@ -32,13 +32,19 @@ class WebManager:
 
     def load_first_page(self):
         self.driver.get(url=ZHIPIN_URL)
-        self.driver.set_page_load_timeout(30)
+        self.wait_page_load()
         print("open finish===================>", self.driver.title)
 
     def get_driver(self):
         return self.driver
 
     def wait_page_load(self):
+        # 设置隐式等待时间为10秒
+        self.driver.implicitly_wait(10)  # 设置隐式等待时间为10秒
+        # 等待页面完全加载
+        WebDriverWait(self.driver, 10).until(
+            lambda driver: driver.execute_script("return document.readyState") == "complete"
+        )
         self.driver.set_page_load_timeout(30)
 
     def wait_untl_element(self, xpath):
@@ -58,8 +64,6 @@ class WebManager:
         )
 
     def open_job(self, index):
-        com_name = ""
-        isInclude = file_manager.check_com_in_file(com_name)
         xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[2]/ul/li[{index}]/div[1]/a/div[1]"
         self.wait_untl_element(xpath_job)
         open_job = self.driver.find_element(By.XPATH, xpath_job)
@@ -157,3 +161,39 @@ class WebManager:
         open_job = self.find_element_by_xpath(xpath)
         open_job.click()
         self.wait_page_load()
+
+    # def scroll_to_element_by_index(self, index):
+    #     try:
+    #         # 构建动态 XPath
+    #         xpath = f'//li[@ka="search_list_{index}"]'
+    #
+    #         # 查找目标元素
+    #         element = self.driver.find_element(By.XPATH, xpath)
+    #
+    #         # 使用 JavaScript 滚动到该元素
+    #         self.driver.execute_script("arguments[0].scrollIntoView();", element)
+    #
+    #         # 选做：可选地，添加等待时间，以确保页面滚动完成
+    #         # import time
+    #         # time.sleep(2)
+    #
+    #     except Exception as e:
+    #         print(f"发生异常：{str(e)}")
+
+    def scroll_to_element_by_index(self, index):
+        try:
+            # 构建动态 XPath
+            xpath = f'//li[@ka="search_list_{index}"]'
+
+            # 查找目标元素
+            element = self.driver.find_element(By.XPATH, xpath)
+
+            # 使用 ActionChains 模拟滚动
+            actions = ActionChains(self.driver)
+            actions.move_to_element(element).perform()
+
+            # 可选：额外调整滚动位置
+            self.driver.execute_script("window.scrollBy(0, -100);")  # 向上滚动100像素
+
+        except Exception as e:
+            print(f"发生异常：{str(e)}")

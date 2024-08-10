@@ -10,8 +10,9 @@ page = 1
 def loop_find() -> bool:
     global page
     global index
-    print(f"当前投递第[{index}]个")
     com_name = web_manager.get_com_name(index)
+    web_manager.scroll_to_element_by_index(index)
+    print(f"当前投递第[{index}]个,公司名：[{com_name}]")
     if com_name is None:
         index += 1
         return True
@@ -20,7 +21,9 @@ def loop_find() -> bool:
         print(f"当前投递的公司：[{com_name}] 被过滤，跳过执行下一个")
         index += 1
         return True
+    print("打开公司页面")
     web_manager.open_job(index)
+    print("获取职位描述")
     job_desc = web_manager.get_job_desc()
     letter = ai_manager.generate_letter(job_desc)
     if letter is None:
