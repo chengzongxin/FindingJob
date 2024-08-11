@@ -3,6 +3,7 @@ import time
 import ai_manager
 import file_manager
 from web_manager import WebManager
+import asyncio
 
 index = 1
 page = 1
@@ -18,12 +19,20 @@ def loop_find() -> bool:
     print(f"当前投递第[{index}]个,公司名：[{com_name}]")
     if com_name is None:
         index += 1
-        return True
+        # return True
+        loop_find()
     is_include = file_manager.check_com_in_file(com_name)
     if is_include:
         print(f"当前投递的公司：[{com_name}] 被过滤，跳过执行下一个")
         index += 1
-        return True
+        # return True
+        loop_find()
+    is_include = file_manager.check_com_in_today_send(com_name)
+    if is_include:
+        print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
+        index += 1
+        # return True
+        loop_find()
     print("打开公司页面")
     web_manager.open_job(index)
     print("获取职位描述")
@@ -37,6 +46,7 @@ def loop_find() -> bool:
     else:
         print(f"The function returned: {letter}")
         web_manager.send_letter(letter)
+        file_manager.write_send_com(com_name)
         time.sleep(2)
         # 开始聊天
         web_manager.close_current()
@@ -46,17 +56,19 @@ def loop_find() -> bool:
         web_manager.go_next_page(page)
         index = 1
     time.sleep(2)
-    return False
+    # return False
+    loop_find()
 
 
 if __name__ == '__main__':
     web_manager = WebManager()
     web_manager.load_first_page(ZHIPIN_URL)
 
-    while True:
-        try:
-            isContinue = loop_find()
-            if isContinue:
-                continue
-        except Exception:
-            continue
+    loop_find()
+    # while True:
+    #     try:
+    #         isContinue = loop_find()
+    #         if isContinue:
+    #             continue
+    #     except Exception:
+    #         continue
