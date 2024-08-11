@@ -62,18 +62,18 @@ class WebManager:
             EC.presence_of_element_located((By.XPATH, xpath_locator))
         )
 
-    def open_job(self, index):
-        xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[2]/ul/li[{index}]/div[1]/a/div[1]"
+    def open_job(self, index ,page):
+        xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
         self.wait_untl_element(xpath_job)
         open_job = self.driver.find_element(By.XPATH, xpath_job)
         open_job.click()
         self.wait_page_load()
         # time.sleep(10)
 
-    def get_com_name(self, index):
+    def get_com_name(self, index, page):
         try:
             # 构建动态 XPath
-            xpath = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[2]/ul/li[{index}]/div[1]/div/div[2]/h3/a"
+            xpath = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/div/div[2]/h3/a"
             com_name = self.driver.find_element(By.XPATH, xpath)
             return com_name.text
 
