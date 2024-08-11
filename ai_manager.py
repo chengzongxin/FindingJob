@@ -64,6 +64,11 @@ from openai import OpenAI
 #
 #     return letter
 
+def filter_and_replace(original_string, filter_list, replacement):
+    for item in filter_list:
+        original_string = original_string.replace(item, replacement)
+    return original_string
+
 def generate_letter(job_desc):
     context = """
     您好，我叫程宗鑫，我对您发布的职位非常感兴趣，我有丰富的开发经验，尤其擅长iOS、前端、uni跨平台、微信小程序、鸿蒙等项目开发。也熟悉Flutter、iOS底层原理、逆向工程和后端技术。我热衷于钻研技术、分析和解决难题，特别是在团队增效技术方面有深入研究。曾在土巴兔公司工作，参与了多个大规模项目，使用了许多前沿技术，覆盖了市面上的大部分功能点。方便的话，我可以发简历给您看看。
@@ -117,6 +122,11 @@ def generate_letter(job_desc):
     if len(letter) < 10:
         print("生成失败")
         return None
+
+    filter_list = ["xxx","XXX","你的名字","此致","敬礼"]
+    replacement = ""
+
+    letter = filter_and_replace(letter, filter_list, replacement)
 
     file_manager.write_send_record(langchain_prompt_template + "\n\n\n\n" + letter)
 

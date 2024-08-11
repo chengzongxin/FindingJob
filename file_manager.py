@@ -40,25 +40,31 @@ def check_com_in_file(com_name: str) -> bool:
     return is_included
 
 
-def write_send_com(com_name):
+def cur_file_name():
     # 获取当前日期
+    from datetime import datetime
     current_date = datetime.now().strftime('%Y%m%d')  # 格式化日期为 YYYYMMDD
     # 拼接文件名
-    file_name = f"{current_date}_send_com.txt"
+    return f"{current_date}_send_com.txt"
+
+
+def write_send_com(com_name):
+    file_name = cur_file_name()
 
     # 检查文件是否存在，如果不存在则创建
     if not os.path.exists(file_name):
-        with open(file_name, 'w') as file:  # 'w' 模式创建新文件
+        with open(file_name, 'w', encoding='utf-8') as file:  # 'w' 模式创建新文件，使用 utf-8 编码
             pass  # 创建空文件
 
     # 追加内容到文件
-    with open(file_name, 'a') as file:
-        file.write(com_name + '\n')  # 将com_name写入文件的新一行
+    with open(file_name, 'a', encoding='utf-8') as file:  # 使用 utf-8 编码
+        file.write(com_name + '\n')  # 将 com_name 写入文件的新一行
 
 
 def check_com_in_today_send(com_name):
+    file_name = cur_file_name()
     # 定义过滤文件的相对路径
-    file_path = os.path.join(os.getcwd(), 'filter.txt')
+    file_path = os.path.join(os.getcwd(), file_name)
 
     # 初始化一个变量，用于标记是否包含
     is_included = False

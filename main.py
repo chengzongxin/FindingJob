@@ -14,6 +14,12 @@ ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale
 def loop_find() -> bool:
     global page
     global index
+    if index > 30:
+        page += 1
+        web_manager.go_next_page(page)
+        index = 1
+        time.sleep(10)
+
     com_name = web_manager.get_com_name(index)
     web_manager.scroll_to_element_by_index(index)
     print(f"当前投递第[{index}]个,公司名：[{com_name}]")
@@ -44,18 +50,14 @@ def loop_find() -> bool:
         print("The function returned None (empty).")
         web_manager.close_current()
     else:
-        print(f"The function returned: {letter}")
+        print(f"The function returned:\n {letter}")
         web_manager.send_letter(letter)
         file_manager.write_send_com(com_name)
         time.sleep(2)
         # 开始聊天
         web_manager.close_current()
     index += 1
-    if index > 30:
-        page += 1
-        web_manager.go_next_page(page)
-        index = 1
-    time.sleep(2)
+
     # return False
     loop_find()
 
