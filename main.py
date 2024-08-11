@@ -1,10 +1,13 @@
+import time
+
+import ai_manager
 import file_manager
 from web_manager import WebManager
-import ai_manager
-import time
 
 index = 1
 page = 1
+
+ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
 
 
 def loop_find() -> bool:
@@ -47,7 +50,7 @@ def loop_find() -> bool:
 
 if __name__ == '__main__':
     web_manager = WebManager()
-    web_manager.load_first_page()
+    web_manager.load_first_page(ZHIPIN_URL)
 
     while True:
         try:

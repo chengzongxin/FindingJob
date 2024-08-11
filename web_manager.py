@@ -21,8 +21,6 @@ CHROME_PATH = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
 current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 # 谷歌浏览器驱动地址
 CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
-ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600"
-
 
 class WebManager:
     def __init__(self) -> None:
@@ -31,8 +29,8 @@ class WebManager:
         chrome_options.binary_location = CHROME_PATH
         self.driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
 
-    def load_first_page(self):
-        self.driver.get(url=ZHIPIN_URL)
+    def load_first_page(self, url):
+        self.driver.get(url)
         self.wait_page_load()
         print("open finish===================>", self.driver.title)
 
