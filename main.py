@@ -37,6 +37,7 @@ def loop_find() -> bool:
     else:
         print(f"The function returned: {letter}")
         web_manager.send_letter(letter)
+        time.sleep(2)
         # 开始聊天
         web_manager.close_current()
     index += 1

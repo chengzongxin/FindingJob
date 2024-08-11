@@ -1,10 +1,13 @@
-from openai import OpenAI
-from datetime import datetime
-import file_manager
 import os
+
+from openai import OpenAI
+
+import file_manager
+
 # 从环境变量中读取值
 OPENAI_BASE_URL = os.getenv('OPENAI_BASE_URL')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 
 def generate_letter(job_desc):
     context = """
@@ -14,13 +17,12 @@ def generate_letter(job_desc):
     question = """
     根据工作描述，寻找出简历里最合适的技能都有哪些?求职者的优势是什么?
     这是一份求职消息，
-    不要"此致"、"敬礼"等词语
-    不要出现gpt相关词汇
-    不要让别人以为是AI写的
+    不要出现"此致"、"敬礼"、“xxx”、"你的名字"等词语
+    不要出现gpt的语气，不能让别人以为是gpt写的
     不要包含求职内容以外的东西,例如“根据您上传的求职要求和个人简历,我来帮您起草一封求职邮件：”这一类的内容，以便于我直接自动化复制粘贴发送。
     """
 
-   # 字数限制
+    # 字数限制
     character_limit = 300
 
     langchain_prompt_template = f"""
@@ -40,7 +42,7 @@ def generate_letter(job_desc):
 
     print('========================开始念咒========================')
 
-    client = OpenAI(api_key=OPENAI_API_KEY,base_url=OPENAI_BASE_URL)
+    client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
     stream = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": langchain_prompt_template}],
@@ -64,5 +66,3 @@ def generate_letter(job_desc):
     file_manager.write(langchain_prompt_template + "\n\n\n\n" + letter)
 
     return letter
-
-
