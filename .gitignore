@@ -1,4 +1,8 @@
 **/send_record
+**/boss_send
+**/liepin_send
 **/__pycache__/
 **/*.pyc
 
+/boss_send
+/liepin_send

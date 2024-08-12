@@ -13,78 +13,22 @@ page = 1
 ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
 LIEPIN_URL = "https://www.liepin.com"
 
+
 # /html/body/div[12]/div[2] 超过限制弹窗
 
-# 递归形式（主方案）
-# def loop_find() -> bool:
-#     global page
-#     global index
-#     if index > 30:
-#         page += 1
-#         web_manager.go_next_page(page)
-#         index = 1
-#         time.sleep(10)
-#
-#     com_name = web_manager.get_com_name(index, page)
-#     web_manager.scroll_to_element_by_index(index)
-#     print(f"当前投递第[{index}]个,公司名：[{com_name}]")
-#     if com_name is None:
-#         index += 1
-#         # return True
-#         loop_find()
-#     is_include = file_manager.check_com_in_file(com_name)
-#     if is_include:
-#         print(f"当前投递的公司：[{com_name}] 被过滤，跳过执行下一个")
-#         index += 1
-#         # return True
-#         loop_find()
-#     is_include = file_manager.check_com_in_today_send(com_name)
-#     if is_include:
-#         print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
-#         index += 1
-#         # return True
-#         loop_find()
-#     print("打开公司页面")
-#     web_manager.open_job(index, page)
-#     print("获取职位描述")
-#     job_desc = web_manager.get_job_desc()
-#     if job_desc is None:
-#         print("获取职位描述失败")
-#         index += 1
-#         # return True
-#         web_manager.close_current()
-#         loop_find()
-#     print("开始聊天")
-#     web_manager.chat_now()
-#     letter = ai_manager.generate_letter(job_desc)
-#     if letter is None:
-#         print("The function returned None (empty).")
-#         web_manager.close_current()
-#     else:
-#         print(f"The function returned:\n {letter}")
-#         web_manager.send_letter(letter)
-#         file_manager.write_send_com(com_name)
-#         time.sleep(2)
-#         # 开始聊天
-#         web_manager.close_current()
-#     index += 1
-#
-#     # return False
-#     loop_find()
-
-def loop_find() -> bool:
+def loop_find():
     global page
     global index
 
     while True:
         if index > 30:
+            print(f"当前第 {index} 个，去下一页")
             page += 1
             web_manager.go_next_page(page)
             index = 1
-            time.sleep(10)
 
         com_name = web_manager.get_com_name(index, page)
-        web_manager.scroll_to_element_by_index(index)
+        web_manager.scroll_to_element_by_index(index, page)
         print(f"当前投递第[{index}]个, 公司名：[{com_name}]")
 
         if com_name is None:
@@ -97,7 +41,8 @@ def loop_find() -> bool:
             index += 1
             continue
 
-        is_include = file_manager.check_com_in_today_send("boss",com_name)
+        is_include = file_manager.check_com_in_today_send("boss", com_name)
+        is_include = True
         if is_include:
             print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
             index += 1
@@ -126,7 +71,7 @@ def loop_find() -> bool:
         else:
             print(f"The function returned:\n {letter}")
             web_manager.send_letter(letter)
-            file_manager.write_send_com("boss",com_name)
+            file_manager.write_send_com("boss", com_name)
             time.sleep(2)
             web_manager.close_current()
 
@@ -179,11 +124,13 @@ def loop_liepin():
         else:
             print(f"The function returned:\n {letter}")
             liepin_web_manager.send_letter(letter)
-            file_manager.write_send_com("liepin",com_name)
+            file_manager.write_send_com("liepin", com_name)
             time.sleep(2)
             liepin_web_manager.close_current()
 
         index += 1
+
+
 #
 
 

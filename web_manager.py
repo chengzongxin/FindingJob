@@ -169,34 +169,17 @@ class WebManager:
         print(self.driver.title)  # 输出原始窗口的标题
 
     def go_next_page(self, page):
-        xpath = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[2]/div/div/div/a[{page}]"
-        self.wait_untl_element(xpath)
-        open_job = self.find_element_by_xpath(xpath)
-        open_job.click()
+        # 找到父元素
+        parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
+        # 直接使用XPath进行查找
+        target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
+        target_element.click()
         self.wait_page_load()
 
-    # def scroll_to_element_by_index(self, index):
-    #     try:
-    #         # 构建动态 XPath
-    #         xpath = f'//li[@ka="search_list_{index}"]'
-    #
-    #         # 查找目标元素
-    #         element = self.driver.find_element(By.XPATH, xpath)
-    #
-    #         # 使用 JavaScript 滚动到该元素
-    #         self.driver.execute_script("arguments[0].scrollIntoView();", element)
-    #
-    #         # 选做：可选地，添加等待时间，以确保页面滚动完成
-    #         # import time
-    #         # time.sleep(2)
-    #
-    #     except Exception as e:
-    #         print(f"发生异常：{str(e)}")
-
-    def scroll_to_element_by_index(self, index):
+    def scroll_to_element_by_index(self, index, page):
         try:
             # 构建动态 XPath
-            xpath = f'//li[@ka="search_list_{index}"]'
+            xpath = f'//li[@ka="search_list_{index + (page - 1) * 30}"]'
 
             # 查找目标元素
             element = self.driver.find_element(By.XPATH, xpath)
@@ -206,7 +189,7 @@ class WebManager:
             actions.move_to_element(element).perform()
 
             # 可选：额外调整滚动位置
-            # self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素
+            self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素
 
         except Exception as e:
             print(f"发生异常：{str(e)}")
