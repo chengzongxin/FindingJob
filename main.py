@@ -42,7 +42,6 @@ def loop_find():
             continue
 
         is_include = file_manager.check_com_in_today_send("boss", com_name)
-        is_include = True
         if is_include:
             print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
             index += 1
