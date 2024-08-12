@@ -126,7 +126,7 @@ def loop_find() -> bool:
         else:
             print(f"The function returned:\n {letter}")
             web_manager.send_letter(letter)
-            file_manager.write_send_com(com_name)
+            file_manager.write_send_com("boss",com_name)
             time.sleep(2)
             web_manager.close_current()
 
