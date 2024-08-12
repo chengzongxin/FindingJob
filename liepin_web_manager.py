@@ -22,7 +22,8 @@ current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 # 谷歌浏览器驱动地址
 CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
 
-class WebManager:
+
+class LiepinWebManager:
     def __init__(self) -> None:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
@@ -62,18 +63,44 @@ class WebManager:
             EC.presence_of_element_located((By.XPATH, xpath_locator))
         )
 
-    def open_job(self, index ,page):
-        xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
-        self.wait_untl_element(xpath_job)
-        open_job = self.driver.find_element(By.XPATH, xpath_job)
-        open_job.click()
-        self.wait_page_load()
-        # time.sleep(10)
+    def get_job_name(self, index, page):
+        try:
+            # 构建动态 XPath
+            xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[1]"
+            job_name = self.driver.find_element(By.XPATH, xpath)
+            return job_name.text
+
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
+
+    def get_job_city(self, index, page):
+        try:
+            # 构建动态 XPath
+            xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[2]"
+            job_city = self.driver.find_element(By.XPATH, xpath)
+            return job_city.text
+
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
 
     def get_com_name(self, index, page):
         try:
             # 构建动态 XPath
-            xpath = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/div/div[2]/h3/a"
+            xpath = f"//*[@id='home-main-box-container']/div[2]/div/ul/li[{index}]/div/div[1]/div[1]/div/div[1]/div/span"
             com_name = self.driver.find_element(By.XPATH, xpath)
             return com_name.text
 
@@ -86,6 +113,12 @@ class WebManager:
             # 打印其他异常信息
             print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
             return None
+
+    def open_job(self, index, page):
+        xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[1]"
+        job_name = self.driver.find_element(By.XPATH, xpath)
+        job_name.click()
+        self.wait_page_load()
 
     def get_job_desc(self):
         # 获取所有窗口句柄
@@ -107,7 +140,7 @@ class WebManager:
 
         print('self.driver.title', self.driver.title)
         try:
-            description_selector = "//*[@id='main']/div[3]/div/div[2]/div[1]/div[3]"
+            description_selector = "/html/body/main/content/section[2]/dl/dd"
             WebDriverWait(self.driver, 20).until(
                 EC.presence_of_element_located((By.XPATH, description_selector))
             )
@@ -128,22 +161,22 @@ class WebManager:
             return None
 
     def chat_now(self):
-        xpath_chat = " //*[@id='main']/div[1]/div/div/div[1]/div[3]/div[1]/a[2]"
+        xpath_chat = "/html/body/main/content/section[1]/a"
         # 点击按钮
         chat_now = self.driver.find_element(By.XPATH, xpath_chat)
         chat_now.click()
 
     def send_letter(self, letter):
-        # 判断是否跳转页面
-        chat_url = 'https://www.zhipin.com/web/geek/chat'
-        if chat_url in self.driver.current_url:
-            self.send_chat_page_letter(letter=letter)
-        else:
-            self.send_job_page_letter(letter=letter)
+        # 输入弹框
+        input_xpath = "//*[@id='im-chatwin']/div/div[2]/div[3]/div[1]/textarea"
+        self.wait_untl_element(input_xpath)
+        input = self.find_element_by_xpath(input_xpath)
+        input.click()
+        input.send_keys(letter)
 
     def send_job_page_letter(self, letter):
         # 输入弹框
-        input_xpath = "/html/body/div[12]/div[2]/div[2]/div/div[1]/div[2]/textarea"
+        input_xpath = "//*[@id='im-chatwin']/div/div[2]/div[3]/div[1]/textarea"
         self.wait_untl_element(input_xpath)
         input = self.find_element_by_xpath(input_xpath)
         input.click()
@@ -169,17 +202,34 @@ class WebManager:
         print(self.driver.title)  # 输出原始窗口的标题
 
     def go_next_page(self, page):
-        # 找到父元素
-        parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
-        # 直接使用XPath进行查找
-        target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
-        target_element.click()
+        xpath = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[2]/div/div/div/a[{page}]"
+        self.wait_untl_element(xpath)
+        open_job = self.find_element_by_xpath(xpath)
+        open_job.click()
         self.wait_page_load()
 
-    def scroll_to_element_by_index(self, index, page):
+    # def scroll_to_element_by_index(self, index):
+    #     try:
+    #         # 构建动态 XPath
+    #         xpath = f'//li[@ka="search_list_{index}"]'
+    #
+    #         # 查找目标元素
+    #         element = self.driver.find_element(By.XPATH, xpath)
+    #
+    #         # 使用 JavaScript 滚动到该元素
+    #         self.driver.execute_script("arguments[0].scrollIntoView();", element)
+    #
+    #         # 选做：可选地，添加等待时间，以确保页面滚动完成
+    #         # import time
+    #         # time.sleep(2)
+    #
+    #     except Exception as e:
+    #         print(f"发生异常：{str(e)}")
+
+    def scroll_to_element_by_index(self, index):
         try:
             # 构建动态 XPath
-            xpath = f'//li[@ka="search_list_{index + (page - 1) * 30}"]'
+            xpath = f'//li[@ka="search_list_{index}"]'
 
             # 查找目标元素
             element = self.driver.find_element(By.XPATH, xpath)
@@ -189,7 +239,10 @@ class WebManager:
             actions.move_to_element(element).perform()
 
             # 可选：额外调整滚动位置
-            self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素
+            # self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素
 
         except Exception as e:
             print(f"发生异常：{str(e)}")
+
+    def get_com_city(self, index, page):
+        pass
