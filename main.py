@@ -10,7 +10,7 @@ page = 1
 
 ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
 
-
+# /html/body/div[12]/div[2] 超过限制弹窗
 def loop_find() -> bool:
     global page
     global index
@@ -47,6 +47,7 @@ def loop_find() -> bool:
         print("获取职位描述失败")
         index += 1
         # return True
+        web_manager.close_current()
         loop_find()
     print("开始聊天")
     web_manager.chat_now()
