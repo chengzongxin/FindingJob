@@ -63,12 +63,16 @@ class WebManager:
         )
 
     def open_job(self, index ,page):
-        xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
-        self.wait_untl_element(xpath_job)
-        open_job = self.driver.find_element(By.XPATH, xpath_job)
-        open_job.click()
-        self.wait_page_load()
-        # time.sleep(10)
+        try:
+            xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
+            self.wait_untl_element(xpath_job)
+            open_job = self.driver.find_element(By.XPATH, xpath_job)
+            open_job.click()
+            self.wait_page_load()
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"在索引 {index} 处打开工作异常。异常信息：{str(e)}")
 
     def get_com_name(self, index, page):
         try:
@@ -88,25 +92,21 @@ class WebManager:
             return None
 
     def get_job_desc(self):
-        # 获取所有窗口句柄
-        window_handles = self.driver.window_handles
-        # 切换到新窗口（假设新窗口是最后一个打开的窗口）
-        self.driver.switch_to.window(window_handles[-1])
-
-        # 在新窗口中执行操作
-        print(self.driver.title)  # 输出新窗口的标题
-
-        # 关闭新窗口
-        # self.driver.close()
-
-        # 切换回原始窗口
-        # self.driver.switch_to.window(window_handles[0])
-
-        # 在原始窗口中继续执行操作
-        # print(self.driver.title)  # 输出原始窗口的标题
-
-        print('self.driver.title', self.driver.title)
         try:
+            # 获取所有窗口句柄
+            window_handles = self.driver.window_handles
+            # 切换到新窗口（假设新窗口是最后一个打开的窗口）
+            self.driver.switch_to.window(window_handles[-1])
+
+            # 关闭新窗口
+            # self.driver.close()
+
+            # 切换回原始窗口
+            # self.driver.switch_to.window(window_handles[0])
+
+            # 在原始窗口中继续执行操作
+            print(self.driver.title)  # 输出原始窗口的标题
+
             description_selector = "//*[@id='main']/div[3]/div/div[2]/div[1]/div[3]"
             WebDriverWait(self.driver, 20).until(
                 EC.presence_of_element_located((By.XPATH, description_selector))
