@@ -161,14 +161,26 @@ class WebManager:
     def close_current(self):
         # 获取所有窗口句柄
         window_handles = self.driver.window_handles
-        # 关闭新窗口
-        self.driver.close()
+        try:
+            # 关闭新窗口
+            self.driver.close()
+        except Exception as e:
+            print("关闭窗口异常", e)
+        # 切换回原始窗口
+        self.driver.switch_to.window(window_handles[0])
+        # 在原始窗口中继续执行操作
+        print(self.driver.title)  # 输出原始窗口的标题
+
+    def switch_first_window(self):
+        # 获取所有窗口句柄
+        window_handles = self.driver.window_handles
         # 切换回原始窗口
         self.driver.switch_to.window(window_handles[0])
         # 在原始窗口中继续执行操作
         print(self.driver.title)  # 输出原始窗口的标题
 
     def go_next_page(self, page):
+        self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素，公司弹窗会挡住翻页按钮
         # 找到父元素
         parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
         # 直接使用XPath进行查找

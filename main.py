@@ -69,10 +69,14 @@ def loop_find():
             web_manager.close_current()
         else:
             print(f"The function returned:\n {letter}")
-            web_manager.send_letter(letter)
-            file_manager.write_send_com("boss", com_name)
-            time.sleep(2)
-            web_manager.close_current()
+            try:
+                web_manager.send_letter(letter)
+                file_manager.write_send_com("boss", com_name)
+                time.sleep(2)
+                web_manager.close_current()
+            except Exception as e:
+                print("发送求职消息异常",e)
+                web_manager.switch_first_window()
 
         index += 1
 
