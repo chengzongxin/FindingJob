@@ -23,40 +23,38 @@ def loop_find():
 
     while True:
         if index > 30:
-            print(f"当前第 {index} 个，去下一页")
+            print(f"当前第 {page} 页，第 {index} 个，去下一页")
             page += 1
             web_manager.go_next_page(page)
             index = 1
 
+        job_name = web_manager.get_job_name(index, page)
         com_name = web_manager.get_com_name(index, page)
-        print(f"当前投递第[{index}]个, 公司名：[{com_name}]")
+        salary = web_manager.get_job_salary(index, page)
+        person_count = web_manager.get_person_count(index, page)
+        print(f"当前投递第[{index}]个, 公司名：[{com_name}]，职位：[{job_name}]， 薪水：[{salary}]，人数：[{person_count}]")
         if com_name is None:
             index += 1
             continue
 
-        salary = web_manager.get_job_salary(index, page)
         salary_range = extract_salaries(salary)
         salary_valid = is_salary_valid(salary_range[0], salary_range[1])
-        person_count = web_manager.get_person_count(index, page)
         if salary is None or salary_valid is False:
-            print(f"当前投递的公司：[{com_name}] 薪水太低，[{salary}]，跳过执行下一个")
+            print(f"薪水太低，[{salary}]，跳过执行下一个")
             index += 1
             continue
-        else:
-            print(f"当前投递的公司：[{com_name}],薪水：[{salary}],人数：[{person_count}]")
 
         is_include = file_manager.check_com_in_file(com_name)
         if is_include:
-            print(f"当前投递的公司：[{com_name}] 被过滤，跳过执行下一个")
+            print(f"被过滤，跳过执行下一个")
             index += 1
             continue
 
         is_include = file_manager.check_com_in_today_send("boss", com_name)
         if is_include:
-            print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
+            print(f"已投递，跳过执行下一个")
             index += 1
             continue
-
 
         web_manager.scroll_to_element_by_index(index, page)
 
@@ -88,7 +86,7 @@ def loop_find():
                 time.sleep(2)
                 web_manager.close_current()
             except Exception as e:
-                print("发送求职消息异常",e)
+                print("发送求职消息异常", e)
                 web_manager.switch_first_window()
 
         index += 1
@@ -115,7 +113,7 @@ def loop_liepin():
 
         is_include = file_manager.check_com_in_today_send("liepin", com_name)
         if is_include:
-            print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
+            print(f"已投递，跳过执行下一个")
             index += 1
             continue
 

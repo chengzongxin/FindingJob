@@ -22,6 +22,7 @@ current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 # 谷歌浏览器驱动地址
 CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
 
+
 class WebManager:
     def __init__(self) -> None:
         chrome_options = webdriver.ChromeOptions()
@@ -68,8 +69,7 @@ class WebManager:
         # 查找目标 item 元素
         return self.driver.find_element(By.XPATH, xpath)
 
-
-    def open_job(self, index ,page):
+    def open_job(self, index, page):
         try:
             xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
             self.wait_untl_element(xpath_job)
@@ -96,6 +96,24 @@ class WebManager:
         except Exception as e:
             # 打印其他异常信息
             print(f"get_com_name 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
+
+    def get_job_name(self, index, page):
+        try:
+            # 查找目标 item 元素
+            item_element = self.get_item(index, page)
+            # 在 item 元素内查找 <span class="salary"> 元素
+            salary_element = item_element.find_element(By.XPATH, './/span[@class="job-name"]')
+            # 返回薪资文本
+            return salary_element.text
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"get_job_salary 元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"get_job_salary 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
             return None
 
     def get_job_salary(self, index, page):
@@ -138,7 +156,6 @@ class WebManager:
             # 打印其他异常信息
             print(f"get_person_count 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
             return None
-
 
     def get_job_desc(self):
         try:
