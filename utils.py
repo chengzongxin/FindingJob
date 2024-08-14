@@ -16,4 +16,4 @@ def is_salary_valid(min_salary, max_salary):
     if min_salary is None or max_salary is None:
         return False
     # 判断第一个数是否大于 10，第二个数是否大于等于 18
-    return min_salary > 10 and max_salary >= 18
+    return min_salary >= 10 and max_salary >= 18
