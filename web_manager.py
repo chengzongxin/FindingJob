@@ -62,6 +62,13 @@ class WebManager:
             EC.presence_of_element_located((By.XPATH, xpath_locator))
         )
 
+    def get_item(self, index, page):
+        # 生成 item 元素的 XPath
+        xpath = f'//li[@ka="search_list_{index + (page - 1) * 30}"]'
+        # 查找目标 item 元素
+        return self.driver.find_element(By.XPATH, xpath)
+
+
     def open_job(self, index ,page):
         try:
             xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
@@ -83,13 +90,55 @@ class WebManager:
 
         except NoSuchElementException as e:
             # 打印异常信息
-            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
+            print(f"get_com_name 元素未找到，索引：{index}，异常信息：{str(e)}")
             return None
 
         except Exception as e:
             # 打印其他异常信息
-            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            print(f"get_com_name 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
             return None
+
+    def get_job_salary(self, index, page):
+        try:
+            # 查找目标 item 元素
+            item_element = self.get_item(index, page)
+            # 在 item 元素内查找 <span class="salary"> 元素
+            salary_element = item_element.find_element(By.XPATH, './/span[@class="salary"]')
+            # 返回薪资文本
+            return salary_element.text
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"get_job_salary 元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"get_job_salary 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
+
+    def get_person_count(self, index, page):
+        try:
+            item_element = self.get_item(index, page)
+            # 在 item 元素内查找 <ul class="company-tag-list"> 元素
+            ul_element = item_element.find_element(By.XPATH, './/ul[@class="company-tag-list"]')
+            # 从 <ul> 元素中查找所有 <li> 元素
+            li_elements = ul_element.find_elements(By.XPATH, './li')
+
+            # 获取最后一个 <li> 元素
+            if li_elements:
+                last_li_element = li_elements[-1]
+                return last_li_element.text
+            return None
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"get_person_count 元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"get_person_count 在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
+
 
     def get_job_desc(self):
         try:

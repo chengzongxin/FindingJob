@@ -4,6 +4,7 @@ import time
 import ai_manager
 import file_manager
 from liepin_web_manager import LiepinWebManager
+from utils import extract_salaries, is_salary_valid
 from web_manager import WebManager
 import asyncio
 
@@ -28,12 +29,21 @@ def loop_find():
             index = 1
 
         com_name = web_manager.get_com_name(index, page)
-        web_manager.scroll_to_element_by_index(index, page)
         print(f"当前投递第[{index}]个, 公司名：[{com_name}]")
-
         if com_name is None:
             index += 1
             continue
+
+        salary = web_manager.get_job_salary(index, page)
+        salary_range = extract_salaries(salary)
+        salary_valid = is_salary_valid(salary_range[0], salary_range[1])
+        person_count = web_manager.get_person_count(index, page)
+        if salary is None or salary_valid is False:
+            print(f"当前投递的公司：[{com_name}] 薪水太低，[{salary}]，跳过执行下一个")
+            index += 1
+            continue
+        else:
+            print(f"当前投递的公司：[{com_name}],薪水：[{salary}],人数：[{person_count}]")
 
         is_include = file_manager.check_com_in_file(com_name)
         if is_include:
@@ -46,6 +56,9 @@ def loop_find():
             print(f"当前投递的公司：[{com_name}] 已投递，跳过执行下一个")
             index += 1
             continue
+
+
+        web_manager.scroll_to_element_by_index(index, page)
 
         print("打开公司页面")
         web_manager.open_job(index, page)
