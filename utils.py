@@ -4,11 +4,15 @@ import re
 def extract_salaries(salary_str):
     # 正则表达式模式，匹配薪资范围中的两个整数
     pattern = r'(\d+)-(\d+)K'
-    match = re.search(pattern, salary_str)
-    if match:
-        # 提取匹配到的两个整数
-        min_salary, max_salary = map(int, match.groups())
-        return min_salary, max_salary
+    try:
+        match = re.search(pattern, salary_str)
+        if match:
+            # 提取匹配到的两个整数
+            min_salary, max_salary = map(int, match.groups())
+            return min_salary, max_salary
+    except Exception as e:
+        print(e)
+
     return None, None
 
 

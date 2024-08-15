@@ -10,7 +10,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_something_else(self):
         web_manager = WebManager()
-        web_manager.load_first_page("https://www.zhipin.com/job_detail/ab0101d62a2d37321HV93dm1FltT.html?lid=3Td10QA59il.search.1&securityId=hkunk2SJZeHLo-2187h-yvZkRFH0FrHvQ6pZ5jn0KbjTo7aOlfHtdoHN_TAXBaMNF34ishlcGhd1u6NkZ3zNrnA9iykMbXQjlerrjHAcySv3BVGgq3sZSu0cgu5xRisBGGtx9KpAExJcjw~~&sessionId=")
+        web_manager.load_first_page("https://www.zhipin.com/job_detail/3493d7cd51b72eea1XVy3d-7FFRR.html?securityId=RMzZ2DIzHqEt5-y1BpCpK6eOtyg-UgQLJfWXy-qmHwtw7QOhFxiPvY_cuRbJIuXJgY0CfeY4yuqXs9S1tYq0flO-7ov7LFTcLDp9nAts1eBl5Ik746YifRM~")
         job_desc = web_manager.get_job_desc()
         letter = ai_manager.generate_letter(job_desc)
         print(letter)
