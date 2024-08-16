@@ -11,7 +11,7 @@ import asyncio
 index = 1
 page = 1
 
-ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
+ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600"
 LIEPIN_URL = "https://www.liepin.com"
 
 
