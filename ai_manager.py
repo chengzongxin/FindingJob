@@ -1,81 +1,66 @@
 import os
-
-from openai import OpenAI
-
-import file_manager
-
-# 从环境变量中读取值
-OPENAI_BASE_URL = os.getenv('OPENAI_BASE_URL')
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
 import yaml
 from openai import OpenAI
+import file_manager
 
-def filter_and_replace(original_string, filter_list, replacement):
-    for item in filter_list:
-        original_string = original_string.replace(item, replacement)
-    return original_string
 
-def generate_letter(job_desc):
-    context = """
-    您好，我叫程宗鑫，我对您发布的职位非常感兴趣，我有丰富的开发经验，尤其擅长iOS、前端、uni跨平台、微信小程序、鸿蒙等项目开发。也熟悉Flutter、iOS底层原理、逆向工程和后端技术。我热衷于钻研技术、分析和解决难题，特别是在团队增效技术方面有深入研究。曾在土巴兔公司工作，参与了多个大规模项目，使用了许多前沿技术，覆盖了市面上的大部分功能点。方便的话，我可以发简历给您看看。
-    """
+class AiManager:
+    def __init__(self, config_path='config.yaml'):
+        self.config = self.load_config(config_path)
+        self.openai_base_url = os.getenv('OPENAI_BASE_URL', self.config['openai']['base_url'])
+        self.openai_api_key = os.getenv('OPENAI_API_KEY', self.config['openai']['api_key'])
+        self.context = self.config['app']['context']
+        self.question = self.config['app']['question']
+        self.filter_list = self.config['app']['filter_list']
+        self.replacement = self.config['app']['replacement']
+        self.role_description = self.config['app']['role_description']
 
-    question = """
-    根据工作描述，寻找出简历里最合适的技能都有哪些?求职者的优势是什么?
-    这是一份求职消息，
-    不要只用一段话说完，要注意排版格式，要按照1,2,3,4点来一个个来说明
-    不要出现"此致"、"敬礼"、“xxx”、"你的名字"，"GPT-4"等词语，
-    不要出现gpt的语气，不能让别人以为是gpt写的，
-    不要包含求职内容以外的东西,例如“根据您上传的求职要求和个人简历,我来帮您起草一封求职邮件：”这一类的内容，以便于我直接自动化复制粘贴发送。
-    """
+    def load_config(self, config_path):
+        with open(config_path, 'r', encoding='utf-8') as file:
+            return yaml.safe_load(file)
 
-    # 字数限制
-    character_limit = 300
+    def filter_and_replace(self, original_string):
+        for item in self.filter_list:
+            original_string = original_string.replace(item, self.replacement)
+        return original_string
 
-    langchain_prompt_template = f"""
-    你将扮演一位求职者的角色,根据上下文里的简历内容以及应聘工作的描述,来直接给HR写一个亲切、礼貌、专业且字数限制在{character_limit}以内的求职消息,
-    要求能够用专业的语言结合简历中的经历和技能,并结合应聘工作的描述,来阐述自己的优势,尽最大可能打动招聘者。
-    始终使用中文来进行消息的编写。
+    def generate_letter(self, job_desc):
+        langchain_prompt_template = f"""
+        {self.role_description}
 
-    工作描述
-    {job_desc}
+        工作描述
+        {job_desc}
 
-    简历内容:
-    {context}
+        简历内容:
+        {self.context}
 
-    要求:
-    {question}
-    """
+        要求:
+        {self.question}
+        """
 
-    print('========================开始念咒========================')
+        print('========================开始念咒========================')
 
-    client = OpenAI(api_key=OPENAI_API_KEY, base_url=OPENAI_BASE_URL)
-    stream = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": langchain_prompt_template}],
-        stream=True,
-    )
+        client = OpenAI(api_key=self.openai_api_key, base_url=self.openai_base_url)
+        stream = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": langchain_prompt_template}],
+            stream=True,
+        )
 
-    # print(stream)
+        letter = ""
 
-    letter = ""
+        for chunk in stream:
+            if chunk.choices[0].delta.content is not None:
+                letter += chunk.choices[0].delta.content
 
-    for chunk in stream:
-        if chunk.choices[0].delta.content is not None:
-            letter += chunk.choices[0].delta.content
+        print('========================咒语生成========================')
 
-    print('========================咒语生成========================')
+        if len(letter) < 10:
+            print("生成失败")
+            return None
 
-    if len(letter) < 10:
-        print("生成失败")
-        return None
+        letter = self.filter_and_replace(letter)
 
-    filter_list = ["xxx","XXX","你的名字","此致","敬礼","一位求职者"]
-    replacement = ""
+        file_manager.write_send_record(langchain_prompt_template + "\n\n\n\n" + letter)
 
-    letter = filter_and_replace(letter, filter_list, replacement)
-
-    file_manager.write_send_record(langchain_prompt_template + "\n\n\n\n" + letter)
-
-    return letter
+        return letter

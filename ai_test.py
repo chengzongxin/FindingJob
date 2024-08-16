@@ -1,6 +1,6 @@
 import unittest
 
-import ai_manager
+from ai_manager import AiManager
 from web_manager import WebManager
 
 
@@ -12,6 +12,7 @@ class MyTestCase(unittest.TestCase):
         web_manager = WebManager()
         web_manager.load_first_page("https://www.zhipin.com/job_detail/da4b44ec8894a02e1HNy3d-8EFRY.html?lid=1KPVQLy5faG.search.9&securityId=eYR5Vd3GuPqIv-e19IDtlll_ja-5y9cxSek9AGspNmJezVNdj8wkn9fRBsUw_ObkDI2vPEMes1GKz8b9kC-A57jb45mkQ5psguRC1ann2et4yaK-hjFzGDMJtZggWThPslB0RSvFCb4H1CLwWwrTN483_JFasRgv6VidLEXocd7r2cL53P0~&sessionId=")
         job_desc = web_manager.get_job_desc()
+        ai_manager = AiManager()
         letter = ai_manager.generate_letter(job_desc)
         print(letter)
 

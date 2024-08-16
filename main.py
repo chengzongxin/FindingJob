@@ -1,8 +1,9 @@
 import sys
 import time
 
-import ai_manager
+# import ai_manager
 import file_manager
+from ai_manager import AiManager
 from liepin_web_manager import LiepinWebManager
 from utils import extract_salaries, is_salary_valid
 from web_manager import WebManager
@@ -72,9 +73,11 @@ def loop_find():
 
         print("开始聊天")
         web_manager.chat_now()
-
+        print("初始化GPT")
+        # 创建 AiManager 对象
+        ai_manager = AiManager()
+        # 使用 AiManager 生成求职信
         letter = ai_manager.generate_letter(job_desc)
-
         if letter is None:
             print("The function returned None (empty).")
             web_manager.close_current()
