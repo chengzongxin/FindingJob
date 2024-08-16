@@ -1,26 +1,23 @@
 import os
-import time
-import subprocess
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.action_chains import ActionChains
 from pathlib import Path
 
-import file_manager
-
-# 全局 WebDriver 实例
-# driver = None
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 CHROME_PATH = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+# current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+# # 谷歌浏览器驱动地址
+# CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
+# 当前文件所在目录
 current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-# 谷歌浏览器驱动地址
-CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
+# 谷歌浏览器驱动地址，位于当前文件的上一层级目录中的 Resources 目录
+CHROMEDRIVER_PATH = str(current_dir.parent / "Resources" / "chromedriver")
 
 
 class LiepinWebManager:

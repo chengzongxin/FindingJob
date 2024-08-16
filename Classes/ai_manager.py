@@ -1,11 +1,17 @@
 import os
+from pathlib import Path
+
 import yaml
 from openai import OpenAI
-import file_manager
+from Classes import file_manager
 
 
 class AiManager:
-    def __init__(self, config_path='config.yaml'):
+    def __init__(self, config_path='Resources/config.yaml'):
+        # 获取当前文件所在目录
+        current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+        # 配置文件的绝对路径
+        config_path = str(current_dir.parent / config_path)
         self.config = self.load_config(config_path)
         self.openai_base_url = os.getenv('OPENAI_BASE_URL', self.config['openai']['base_url'])
         self.openai_api_key = os.getenv('OPENAI_API_KEY', self.config['openai']['api_key'])

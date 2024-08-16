@@ -2,12 +2,11 @@ import sys
 import time
 
 # import ai_manager
-import file_manager
-from ai_manager import AiManager
-from liepin_web_manager import LiepinWebManager
-from utils import extract_salaries, is_salary_valid
-from web_manager import WebManager
-import asyncio
+from Classes import file_manager
+from Classes.ai_manager import AiManager
+from Classes.liepin_web_manager import LiepinWebManager
+from Classes.utils import extract_salaries, is_salary_valid
+from Classes.web_manager import WebManager
 
 index = 1
 page = 1

@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from pathlib import Path
 
 
 def write_send_record(data):
@@ -18,10 +19,16 @@ def write_send_record(data):
     print(f"内容已成功写入文件：{file_name}")
 
 
+def get_resource_file_path(filename):
+    # 获取当前文件所在目录
+    current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+
+    # 返回指向 Resources 目录中的文件的路径
+    return str(current_dir.parent / 'Resources' / filename)
+
 def check_com_in_file(com_name: str) -> bool:
     # 定义过滤文件的相对路径
-    file_path = os.path.join(os.getcwd(), 'filter.txt')
-
+    file_path = get_resource_file_path('filter.txt')
     # 初始化一个变量，用于标记是否包含
     is_included = False
 

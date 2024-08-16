@@ -12,16 +12,19 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from pathlib import Path
 
-import file_manager
+import Classes.file_manager
 
 # 全局 WebDriver 实例
 # driver = None
 
 CHROME_PATH = r'C:\Program Files\Google\Chrome\Application\chrome.exe'
+# current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+# # 谷歌浏览器驱动地址
+# CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
+# 当前文件所在目录
 current_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-# 谷歌浏览器驱动地址
-CHROMEDRIVER_PATH = str(current_dir / "chromedriver")
-
+# 谷歌浏览器驱动地址，位于当前文件的上一层级目录中的 Resources 目录
+CHROMEDRIVER_PATH = str(current_dir.parent / "Resources" / "chromedriver")
 
 class WebManager:
     def __init__(self) -> None:

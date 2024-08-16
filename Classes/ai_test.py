@@ -1,7 +1,7 @@
 import unittest
 
-from ai_manager import AiManager
-from web_manager import WebManager
+from Classes.ai_manager import AiManager
+from Classes.web_manager import WebManager
 
 
 class MyTestCase(unittest.TestCase):
