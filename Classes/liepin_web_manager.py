@@ -60,56 +60,44 @@ class LiepinWebManager:
             EC.presence_of_element_located((By.XPATH, xpath_locator))
         )
 
+    def get_item(self):
+        # 定位职位信息容器
+        container = self.driver.find_elements(By.CSS_SELECTOR, ".job-list-box")
+        # 查找目标 item 元素
+        # 抓取职位信息
+        job_elements = self.driver.find_elements(By.CSS_SELECTOR, '.job-detail-box')
+        return job_elements
+
+    def get_item_content(self, index):
+        try:
+            # 查找目标 item 元素
+            job_elements = self.get_item()
+            if len(job_elements) >= index:
+                # 只取第二个职位的信息
+                job = job_elements[index]  # 第二个元素，索引为 1
+                title = job.find_element(By.CSS_SELECTOR, '.job-title-box .ellipsis-1').text
+                company_name = job.find_element(By.CSS_SELECTOR, '.job-company-info-box .company-name').text
+
+                print(f"职位名称: {title}")
+                print(f"公司名称: {company_name}")
+                print('----------------------------')
+            else:
+                print("未找到足够的职位信息。")
+
+        except NoSuchElementException as e:
+            # 打印异常信息
+            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
+            return None
+
+        except Exception as e:
+            # 打印其他异常信息
+            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
+            return None
+
     def get_job_name(self, index, page):
-        try:
-            # 构建动态 XPath
-            xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[1]"
-            job_name = self.driver.find_element(By.XPATH, xpath)
-            return job_name.text
-
-        except NoSuchElementException as e:
-            # 打印异常信息
-            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
-            return None
-
-        except Exception as e:
-            # 打印其他异常信息
-            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
-            return None
-
-    def get_job_city(self, index, page):
-        try:
-            # 构建动态 XPath
-            xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[2]"
-            job_city = self.driver.find_element(By.XPATH, xpath)
-            return job_city.text
-
-        except NoSuchElementException as e:
-            # 打印异常信息
-            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
-            return None
-
-        except Exception as e:
-            # 打印其他异常信息
-            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
-            return None
-
-    def get_com_name(self, index, page):
-        try:
-            # 构建动态 XPath
-            xpath = f"//*[@id='home-main-box-container']/div[2]/div/ul/li[{index}]/div/div[1]/div[1]/div/div[1]/div/span"
-            com_name = self.driver.find_element(By.XPATH, xpath)
-            return com_name.text
-
-        except NoSuchElementException as e:
-            # 打印异常信息
-            print(f"元素未找到，索引：{index}，异常信息：{str(e)}")
-            return None
-
-        except Exception as e:
-            # 打印其他异常信息
-            print(f"在索引 {index} 处没有找到工作。异常信息：{str(e)}")
-            return None
+        # 在 item 元素内查找 <span class="salary"> 元素
+        job_name = self.get_item_content_by_xpath('.//span[@class="job-name"]')
+        return job_name.text if job_name else None
 
     def open_job(self, index, page):
         xpath = f"//*[@id='lp-search-job-box']/div[3]/section[1]/div[2]/div[{index}]/div/div[1]/div/a/div[1]/div/div[1]"

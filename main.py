@@ -12,7 +12,7 @@ index = 1
 page = 1
 
 ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600"
-LIEPIN_URL = "https://www.liepin.com"
+LIEPIN_URL = "https://www.liepin.com/zhaopin/?city=050090&dq=050090&pubTime=7&currentPage=0&pageSize=40&key=iOS&suggestTag=&workYearCode=0&compId=&compName=&compTag=&industry=&salary=&jobKind=&compScale=&compKind=&compStage=&eduLevel=&otherCity=&sfrom=search_job_pc&ckId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&skId=bbruc1vyvwae00jhhdsdtgu8w3otehbb&fkId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&scene=condition&suggestId="
 
 
 # /html/body/div[12]/div[2] 超过限制弹窗
@@ -99,52 +99,61 @@ def loop_liepin():
     global index
 
     while True:
-        job_name = liepin_web_manager.get_job_name(index, page)
-        job_city = liepin_web_manager.get_job_city(index, page)
-        com_name = liepin_web_manager.get_com_name(index, page)
-
-        if job_name is None or job_city is None or com_name is None:
-            index += 1
-            continue
-
-        if "iOS" in job_name and "深圳" in job_city:
-            web_manager.open_job(index, page)
-        else:
-            index += 1
-            continue
-
-        is_include = file_manager.check_com_in_today_send("liepin", com_name)
-        if is_include:
-            print(f"已投递，跳过执行下一个")
-            index += 1
-            continue
-
-        liepin_web_manager.open_job(index, page)
-        print("获取职位描述")
-        job_desc = liepin_web_manager.get_job_desc()
-
-        if job_desc is None:
-            print("获取职位描述失败")
-            index += 1
-            liepin_web_manager.close_current()
-            continue
-
-        print("开始聊天")
-        liepin_web_manager.chat_now()
-
-        letter = ai_manager.generate_letter(job_desc)
-
-        if letter is None:
-            print("The function returned None (empty).")
-            liepin_web_manager.close_current()
-        else:
-            print(f"The function returned:\n {letter}")
-            liepin_web_manager.send_letter(letter)
-            file_manager.write_send_com("liepin", com_name)
-            time.sleep(2)
-            liepin_web_manager.close_current()
-
+        if index > 30:
+            break
+        liepin_web_manager.get_item_content(index)
         index += 1
+
+    # while True:
+    #     job_name = liepin_web_manager.get_job_name(index, page)
+    #     job_city = liepin_web_manager.get_job_city(index, page)
+    #     salary = liepin_web_manager.get_job_salary(index, page)
+    #     com_name = liepin_web_manager.get_com_name(index, page)
+    #
+    #     liepin_web_manager.scroll_to_element_by_index(index)
+    #
+    #     if job_name is None or job_city is None or com_name is None or salary is None:
+    #         index += 1
+    #         continue
+    #
+    #     if "iOS" in job_name and "深圳" in job_city:
+    #         web_manager.open_job(index, page)
+    #     else:
+    #         index += 1
+    #         continue
+    #
+    #     is_include = file_manager.check_com_in_today_send("liepin", com_name)
+    #     if is_include:
+    #         print(f"已投递，跳过执行下一个")
+    #         index += 1
+    #         continue
+    #
+    #     liepin_web_manager.open_job(index, page)
+    #     print("获取职位描述")
+    #     job_desc = liepin_web_manager.get_job_desc()
+    #
+    #     if job_desc is None:
+    #         print("获取职位描述失败")
+    #         index += 1
+    #         liepin_web_manager.close_current()
+    #         continue
+    #
+    #     print("开始聊天")
+    #     liepin_web_manager.chat_now()
+    #
+    #     letter = ai_manager.generate_letter(job_desc)
+    #
+    #     if letter is None:
+    #         print("The function returned None (empty).")
+    #         liepin_web_manager.close_current()
+    #     else:
+    #         print(f"The function returned:\n {letter}")
+    #         liepin_web_manager.send_letter(letter)
+    #         file_manager.write_send_com("liepin", com_name)
+    #         time.sleep(2)
+    #         liepin_web_manager.close_current()
+    #
+    #     index += 1
 
 
 #
