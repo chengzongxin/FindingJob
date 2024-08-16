@@ -10,10 +10,14 @@ class MyTestCase(unittest.TestCase):
 
     def test_something_else(self):
         web_manager = WebManager()
-        web_manager.load_first_page("https://www.zhipin.com/job_detail/da4b44ec8894a02e1HNy3d-8EFRY.html?lid=1KPVQLy5faG.search.9&securityId=eYR5Vd3GuPqIv-e19IDtlll_ja-5y9cxSek9AGspNmJezVNdj8wkn9fRBsUw_ObkDI2vPEMes1GKz8b9kC-A57jb45mkQ5psguRC1ann2et4yaK-hjFzGDMJtZggWThPslB0RSvFCb4H1CLwWwrTN483_JFasRgv6VidLEXocd7r2cL53P0~&sessionId=")
+        job_detail_page_url = "https://www.zhipin.com/job_detail/ea122426861464111HB43t65EFJY.html?securityId=oLEyyuAqWsIc0-t1GzaMJzv7XU65-XUP-EDBQR7pAieGOVBdTMAWq7CQUtPEnXDDPIFB9El_hywBPvcHqibkeDFySFxYmYqnrkwPZMhMzimFj6KN2IOr0Q%7E%7E&ka=personal_interest_job_ea122426861464111HB43t65EFJY"
+        web_manager.load_first_page(job_detail_page_url)
         job_desc = web_manager.get_job_desc()
+        web_manager.chat_now()
         ai_manager = AiManager()
         letter = ai_manager.generate_letter(job_desc)
+        # 发送消息
+        # web_manager.send_letter(letter)
         print(letter)
 
 if __name__ == '__main__':
