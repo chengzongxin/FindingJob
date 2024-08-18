@@ -11,7 +11,7 @@ from Classes.web_manager import WebManager
 index = 1
 page = 1
 
-ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600"
+ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
 LIEPIN_URL = "https://www.liepin.com/zhaopin/?city=050090&dq=050090&pubTime=7&currentPage=0&pageSize=40&key=iOS&suggestTag=&workYearCode=0&compId=&compName=&compTag=&industry=&salary=&jobKind=&compScale=&compKind=&compStage=&eduLevel=&otherCity=&sfrom=search_job_pc&ckId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&skId=bbruc1vyvwae00jhhdsdtgu8w3otehbb&fkId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&scene=condition&suggestId="
 
 
