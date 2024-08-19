@@ -248,13 +248,27 @@ class WebManager:
         # 在原始窗口中继续执行操作
         print(self.driver.title)  # 输出原始窗口的标题
 
-    def go_next_page(self, page):
+    def scroll_to_next(self):
         self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素，公司弹窗会挡住翻页按钮
-        # 找到父元素
-        parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
-        # 直接使用XPath进行查找
-        target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
-        target_element.click()
+
+    def go_next_page(self, page):
+        # 滚动到底部
+        # self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        # 获取 <div class="options-pages"> 下的所有元素
+        elements = self.driver.find_elements_by_css_selector('div.options-pages > *')
+
+        # 如果有元素存在，点击最后一个元素
+        if elements:
+            last_element = elements[-1]
+            last_element.click()
+        else:
+            print("No elements found under div.options-pages.")
+            # 找到父元素
+            parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
+            # 直接使用XPath进行查找
+            target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
+            target_element.click()
+
         self.wait_page_load()
 
     def scroll_to_element_by_index(self, index, page):
