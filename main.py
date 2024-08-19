@@ -32,7 +32,20 @@ def loop_find():
         com_name = web_manager.get_com_name(index, page)
         salary = web_manager.get_job_salary(index, page)
         person_count = web_manager.get_person_count(index, page)
+
         print(f"当前投递第[{index}]个, 公司名：[{com_name}]，职位：[{job_name}]， 薪水：[{salary}]，人数：[{person_count}]")
+        if job_name is None or salary is None or person_count is None or com_name is None:
+            print(f"信息获取补全，跳过执行下一个")
+            index += 1
+            continue
+            
+        if 'iOS' in job_name or 'ios' in job_name or 'IOS' in job_name or '移动' in job_name:
+            pass
+        else:
+            print(f"职位:[{job_name}] 不包含iOS，跳过执行下一个")
+            index += 1
+            continue
+
         if com_name is None:
             index += 1
             continue
