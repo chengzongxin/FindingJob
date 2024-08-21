@@ -13,8 +13,8 @@ page = 1
 
 ZHIPIN_URL = "https://www.zhipin.com/web/geek/job?query=iOS&city=101280600&scale=302,303,304"
 LIEPIN_URL = "https://www.liepin.com/zhaopin/?city=050090&dq=050090&pubTime=7&currentPage=0&pageSize=40&key=iOS&suggestTag=&workYearCode=0&compId=&compName=&compTag=&industry=&salary=&jobKind=&compScale=&compKind=&compStage=&eduLevel=&otherCity=&sfrom=search_job_pc&ckId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&skId=bbruc1vyvwae00jhhdsdtgu8w3otehbb&fkId=uon2uzpoxlpsl5bnmoctyvq2plnyclja&scene=condition&suggestId="
-FLUTTER_URL = "https://www.zhipin.com/web/geek/job?query=flutter%E5%85%BC%E8%81%8C&city=101280600"
-
+FLUTTER_URL = "https://www.zhipin.com/web/geek/job?query=flutter&city=101280600"
+FRONT_URL = "https://www.zhipin.com/web/geek/job?query=%E5%89%8D%E7%AB%AF&city=101280600"
 # /html/body/div[12]/div[2] 超过限制弹窗
 
 def loop_find():
@@ -33,19 +33,19 @@ def loop_find():
         salary = web_manager.get_job_salary(index, page)
         person_count = web_manager.get_person_count(index, page)
 
-        web_manager.scroll_to_next();
+        # web_manager.scroll_to_next();
         print(f"当前投递第[{index}]个, 公司名：[{com_name}]，职位：[{job_name}]， 薪水：[{salary}]，人数：[{person_count}]")
         if job_name is None or salary is None or person_count is None or com_name is None:
             print(f"信息获取补全，跳过执行下一个")
             index += 1
             continue
             
-        if 'iOS' in job_name or 'ios' in job_name or 'IOS' in job_name or '移动' in job_name:
-            pass
-        else:
-            print(f"职位:[{job_name}] 不包含iOS，跳过执行下一个")
-            index += 1
-            continue
+        # if 'iOS' in job_name or 'ios' in job_name or 'IOS' in job_name or '移动' in job_name:
+        #     pass
+        # else:
+        #     print(f"职位:[{job_name}] 不包含iOS，跳过执行下一个")
+        #     index += 1
+        #     continue
 
         if com_name is None:
             index += 1
@@ -108,7 +108,7 @@ def loop_find():
         index += 1
 
 
-def loop_find_flutter():
+def loop_find_common():
     global page
     global index
 
@@ -124,17 +124,10 @@ def loop_find_flutter():
         salary = web_manager.get_job_salary(index, page)
         person_count = web_manager.get_person_count(index, page)
 
-        web_manager.scroll_to_next();
+        # web_manager.scroll_to_next();
         print(f"当前投递第[{index}]个, 公司名：[{com_name}]，职位：[{job_name}]， 薪水：[{salary}]，人数：[{person_count}]")
         if job_name is None or salary is None or person_count is None or com_name is None:
             print(f"信息获取补全，跳过执行下一个")
-            index += 1
-            continue
-
-        if 'flutter' in job_name or 'Flutter' in job_name or 'IOS' in job_name or '移动' in job_name:
-            pass
-        else:
-            print(f"职位:[{job_name}] 不包含flutter，跳过执行下一个")
             index += 1
             continue
 
@@ -261,22 +254,20 @@ def loop_liepin():
 
 if __name__ == '__main__':
     # print("sys.argv", sys.argv, sys.argv[0], sys.argv[1])
-    if sys.argv[1] == "boss":
+    job = sys.argv[1]
+    if job == "boss":
         web_manager = WebManager()
         web_manager.load_first_page(ZHIPIN_URL)
         loop_find()
-    elif sys.argv[1] == "liepin":
+    elif job == "liepin":
         liepin_web_manager = LiepinWebManager()
         liepin_web_manager.load_first_page(LIEPIN_URL)
         loop_liepin()
-    elif sys.argv[1] == "flutter":
+    elif job == "flutter":
         web_manager = WebManager()
         web_manager.load_first_page(FLUTTER_URL)
-        loop_find_flutter()
-    # while True:
-    #     try:
-    #         isContinue = loop_find()
-    #         if isContinue:
-    #             continue
-    #     except Exception:
-    #         continue
+        loop_find_common()
+    elif job == "front":
+        web_manager = WebManager()
+        web_manager.load_first_page(FRONT_URL)
+        loop_find_common()

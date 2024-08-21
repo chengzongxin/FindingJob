@@ -76,7 +76,8 @@ class WebManager:
         try:
             xpath_job = f"//*[@id='wrap']/div[2]/div[2]/div/div[1]/div[{1 if page > 1 else 2}]/ul/li[{index}]/div[1]/a/div[1]"
             self.wait_untl_element(xpath_job)
-            open_job = self.driver.find_element(By.XPATH, xpath_job)
+            # open_job = self.driver.find_element(By.XPATH, xpath_job)
+            open_job = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, xpath_job)))
             open_job.click()
             self.wait_page_load()
 
@@ -197,7 +198,7 @@ class WebManager:
             return None
 
     def chat_now(self):
-        xpath_chat = " //*[@id='main']/div[1]/div/div/div[1]/div[3]/div[1]/a[2]"
+        xpath_chat = "//*[@id='main']/div[1]/div/div/div[1]/div[3]/div[1]/a[2]"
         # 点击按钮
         chat_now = self.driver.find_element(By.XPATH, xpath_chat)
         chat_now.click()
@@ -232,7 +233,8 @@ class WebManager:
         window_handles = self.driver.window_handles
         try:
             # 关闭新窗口
-            self.driver.close()
+            if len(self.driver.window_handles) > 2:
+                self.driver.close()
         except Exception as e:
             print("关闭窗口异常", e)
         # 切换回原始窗口
@@ -249,25 +251,39 @@ class WebManager:
         print(self.driver.title)  # 输出原始窗口的标题
 
     def scroll_to_next(self):
-        self.driver.execute_script("window.scrollBy(0, 100);")  # 向上滚动100像素，公司弹窗会挡住翻页按钮
+        self.driver.execute_script("window.scrollBy(0, 80);")  # 向上滚动100像素，公司弹窗会挡住翻页按钮
 
     def go_next_page(self, page):
         # 滚动到底部
         # self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         # 获取 <div class="options-pages"> 下的所有元素
-        elements = self.driver.find_elements_by_css_selector('div.options-pages > *')
+        def go_next_action():
+            try:
+                elements = self.driver.find_elements_by_css_selector('div.options-pages > *')
 
-        # 如果有元素存在，点击最后一个元素
-        if elements:
-            last_element = elements[-1]
-            last_element.click()
-        else:
-            print("No elements found under div.options-pages.")
-            # 找到父元素
-            parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
-            # 直接使用XPath进行查找
-            target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
-            target_element.click()
+                # 如果有元素存在，点击最后一个元素
+                if elements:
+                    last_element = elements[-1]
+                    last_element.click()
+                else:
+                    print("No elements found under div.options-pages.")
+                    # 找到父元素
+                    parent_element = self.driver.find_element(By.CLASS_NAME, "options-pages")
+                    # 直接使用XPath进行查找
+                    target_element = parent_element.find_element(By.XPATH, f".//a[text()='{page}']")
+                    target_element.click()
+
+            except Exception as e:
+                print(f"发生异常：{str(e)}")
+
+        try:
+            go_next_action()
+
+        except Exception as e:
+            print(f"发生异常：{str(e)}")
+
+            self.driver.execute_script("window.scrollBy(0, 50);")  # 向下滚动 50 像素，可以根据实际情况调整
+            go_next_action()
 
         self.wait_page_load()
 
